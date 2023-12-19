@@ -1,6 +1,10 @@
 ### Summary
 Reimplement micrograd with train ability
 
-### TODOS
-[] todo item1
-[] todo item2
+### TODO
+[] Optimizer      
+[] loss   
+[] required_grad   
+[] tensor   
+[] grad_fn
+[] backward only once + retain graph   

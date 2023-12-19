@@ -28,7 +28,6 @@ class ScalarValue:
         self.grad = grad
         self._backward = lambda: None
 
-
     def __add__(self, val: Union[ScalarValue, float]) -> ScalarValue:
         val = self._parse_val(val=val)
         add_value = ScalarValue(self.data + val.data, children=(self, val), op=OpType.ADD)
@@ -37,7 +36,6 @@ class ScalarValue:
             val.grad += add_value.grad
         add_value._backward = _backward
         return add_value
-
 
     def __mul__(self, val: Union[ScalarValue, float]) -> ScalarValue:
         val = self._parse_val(val=val)
@@ -48,20 +46,19 @@ class ScalarValue:
         mul_value._backward = _backward
         return mul_value
 
-
     def __neg__(self) -> ScalarValue:
         return -1.0 * self
-
 
     def __truediv__(self, val: Union[ScalarValue, float]) -> ScalarValue:
         val = self._parse_val(val=val)
         return self * val.pow(-1.0)
 
-
     def __rmul__(self, val: Union[ScalarValue, float]) -> ScalarValue:
         val = self._parse_val(val=val)
         return self * val
 
+    def item(self) -> float:
+        return self.data
 
     def pow(self, val: Union[ScalarValue, float]) -> ScalarValue:
         val = self._parse_val(val=val)
@@ -71,14 +68,12 @@ class ScalarValue:
         pow_value._backward = _backward
         return pow_value
 
-
     def exp(self) -> ScalarValue:
         exp_value = ScalarValue(data=math.exp(self.data), children=(self, ), op=OpType.EXP)
         def _backward():
             self.grad += exp_value.grad * exp_value.data
         exp_value._backward = _backward
         return exp_value
-
 
     def relu(self) -> ScalarValue:
         relu_value = ScalarValue(data=self.data if self.data > 0 else 0, children=(self, ), op=OpType.RELU)
@@ -87,7 +82,6 @@ class ScalarValue:
         relu_value._backward = _backward
         return relu_value
 
-
     def _parse_val(self, val: Union[ScalarValue, float]) -> ScalarValue:
         if type(val) == float:
             return ScalarValue(data=val)
@@ -95,10 +89,8 @@ class ScalarValue:
             return val
         raise RuntimeError(f'Invalid val type: {type(val)}')
 
-
     def zero_grad(self):
         self.grad = 0.0
-
 
     def backward(self, grad: float=1.0):
         self.grad = grad
@@ -107,7 +99,7 @@ class ScalarValue:
         vis_set = set([self])
         while queue:
             node = queue.pop(0)
-            # skip leaf nodes' backward
+            # skip leaf nodes' backward, for now all nodes require gradient
             if len(node.children) > 0:
                 topo_list.append(node)
             for prev_node in node.children:
@@ -117,6 +109,5 @@ class ScalarValue:
         for node in topo_list:
             node._backward()
 
-
     def __repr__(self) -> str:
-        return f'data: {self.data}, grad: {self.grad}, children: {self.children}, op: {self.op}'
+        return f'data: {self.data}, grad: {self.grad}, op: {self.op}'
