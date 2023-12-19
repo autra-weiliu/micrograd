@@ -52,6 +52,9 @@ class ScalarValue:
     def __neg__(self) -> ScalarValue:
         return -1.0 * self
 
+    def __abs__(self) -> ScalarValue:
+        return self if self.data > 0 else (- self)
+
     def __truediv__(self, val: Union[ScalarValue, float]) -> ScalarValue:
         val = self._parse_val(val=val)
         return self * val.pow(-1.0)

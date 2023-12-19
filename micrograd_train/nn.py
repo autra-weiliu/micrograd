@@ -108,3 +108,15 @@ class MSELoss(Loss):
         for scalar_diff in scalar_diff_list:
             loss_output = loss_output + scalar_diff
         return loss_output ** 0.5
+
+class L1Loss(Loss):
+    def __init__(self) -> None:
+        pass
+
+    def __call__(self, pred_outputs: List[ScalarValue], gt_outputs: List[ScalarValue]) -> ScalarValue:
+        assert len(pred_outputs) == len(gt_outputs), 'pred and gt dim is not aligned'
+        scalar_diff_list = [abs(pred - gt) for pred, gt in zip(pred_outputs, gt_outputs)]
+        loss_output = ScalarValue(data=0.0)
+        for scalar_diff in scalar_diff_list:
+            loss_output = loss_output + scalar_diff
+        return loss_output
