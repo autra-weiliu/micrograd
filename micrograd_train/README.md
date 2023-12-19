@@ -2,8 +2,8 @@
 Reimplement micrograd with train ability
 
 ### TODO
-[] Optimizer      
-[] loss   
+[x] Optimizer      
+[x] loss   
 [] required_grad   
 [] tensor   
 [] grad_fn

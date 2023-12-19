@@ -37,6 +37,9 @@ class ScalarValue:
         add_value._backward = _backward
         return add_value
 
+    def __sub__(self, val: Union[ScalarValue, float]) -> ScalarValue:
+        return self + (- val)
+
     def __mul__(self, val: Union[ScalarValue, float]) -> ScalarValue:
         val = self._parse_val(val=val)
         mul_value = ScalarValue(self.data * val.data, children=(self, val), op=OpType.MUL)
@@ -57,6 +60,9 @@ class ScalarValue:
         val = self._parse_val(val=val)
         return self * val
 
+    def __pow__(self, val) -> ScalarValue:
+        return self.pow(val=val)
+
     def item(self) -> float:
         return self.data
 
@@ -76,9 +82,9 @@ class ScalarValue:
         return exp_value
 
     def relu(self) -> ScalarValue:
-        relu_value = ScalarValue(data=self.data if self.data > 0 else 0, children=(self, ), op=OpType.RELU)
+        relu_value = ScalarValue(data=self.data if self.data > 0 else 0.0, children=(self, ), op=OpType.RELU)
         def _backward():
-            self.grad += (1 if self.data > 0 else 0) * relu_value.grad
+            self.grad += (1.0 if self.data > 0 else 0.0) * relu_value.grad
         relu_value._backward = _backward
         return relu_value
 
@@ -110,4 +116,4 @@ class ScalarValue:
             node._backward()
 
     def __repr__(self) -> str:
-        return f'data: {self.data}, grad: {self.grad}, op: {self.op}'
+        return f'data: {self.data}'
